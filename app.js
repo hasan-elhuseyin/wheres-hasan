@@ -91,13 +91,11 @@ const closePhotoBtn = document.getElementById("closePhotoBtn");
 
 function closePhoto() {
     overlay.classList.add("hidden");
-    photoBtn.focus();
 }
 
 photoBtn.addEventListener("click", () => {
     img.src = PHOTO_URL + "?t=" + Date.now();
     overlay.classList.remove("hidden");
-    closePhotoBtn.focus(); // focus back button
 });
 
 closePhotoBtn.addEventListener("click", closePhoto);
