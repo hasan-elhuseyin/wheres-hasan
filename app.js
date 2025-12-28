@@ -58,7 +58,7 @@ function update() {
 
 // Base URL for photos (GitHub raw)
 const PHOTO_BASE_URL =
-    "https://raw.githubusercontent.com/hasan-elhuseyin/wheres-hasan/main/src/photos/";
+  "https://raw.githubusercontent.com/hasan-elhuseyin/wheres-hasan/main/src/photos/";
 
 const photoBtn = document.getElementById("photoBtn");
 const overlay = document.getElementById("photoOverlay");
@@ -72,7 +72,7 @@ function getTodayPhotoUrl() {
     const month = String(now.getMonth() + 1).padStart(2, "0");
     const day = String(now.getDate()).padStart(2, "0");
 
-    const filename = `photo_${year}-${month}-${day}.jpg`;
+    const filename = `photo_${year}-${month}-${day}.JPG`; // match case
     return PHOTO_BASE_URL + filename;
 }
 
