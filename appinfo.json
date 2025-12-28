@@ -1,0 +1,9 @@
+{
+  "id": "com.hasan.whereshassan",
+  "version": "1.0.0",
+  "vendor": "Hasan",
+  "type": "web",
+  "main": "index.html",
+  "title": "where's hasan?",
+  "icon": "icon.png"
+}
