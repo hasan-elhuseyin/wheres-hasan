@@ -7,6 +7,7 @@ function getNextVisitWindow(now) {
     nextSunday.setHours(14, 0, 0, 0);
 
     if (daysUntilSunday === 0 && now.getHours() >= 18) {
+        // Already past today's visit → next Sunday
         nextSunday.setDate(nextSunday.getDate() + 7);
     }
 
@@ -55,28 +56,35 @@ function update() {
     bar.style.width = progress + "%";
 }
 
-// Single filename URL
-const PHOTO_URL =
-    "https://raw.githubusercontent.com/hasan-elhuseyin/wheres-hasan/main/src/photo_of_the_day.jpg";
+// Base URL for photos (GitHub raw)
+const PHOTO_BASE_URL =
+    "https://raw.githubusercontent.com/hasan-elhuseyin/wheres-hasan/main/src/photos/";
 
 const photoBtn = document.getElementById("photoBtn");
 const overlay = document.getElementById("photoOverlay");
 const img = document.getElementById("dailyPhoto");
 const closePhotoBtn = document.getElementById("closePhotoBtn");
 
-// Function to load photo and completely bypass cache
+// Generate today's photo filename
+function getTodayPhotoUrl() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    const filename = `photo_${year}-${month}-${day}.jpg`;
+    return PHOTO_BASE_URL + filename;
+}
+
+// Load photo and bypass cache
 async function loadPhoto() {
+    const url = getTodayPhotoUrl() + "?v=" + Date.now(); // unique query to bypass cache
     try {
-        // Append a unique timestamp to force fetch a new copy
-        const uniqueUrl = PHOTO_URL + "?v=" + Date.now();
-
-        const response = await fetch(uniqueUrl, { cache: "no-store" });
-
-        if (!response.ok) throw new Error("Failed to fetch image");
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) throw new Error("Photo not found for today");
 
         const blob = await response.blob();
 
-        // Revoke previous object URL to avoid memory leaks
         if (img.src.startsWith("blob:")) {
             URL.revokeObjectURL(img.src);
         }
@@ -85,7 +93,9 @@ async function loadPhoto() {
         img.src = objectUrl;
         overlay.classList.remove("hidden");
     } catch (err) {
-        console.error("Failed to load photo of the day", err);
+        console.warn("No photo for today, showing fallback", err);
+        img.src = "fallback.jpg"; // local fallback in your app folder
+        overlay.classList.remove("hidden");
     }
 }
 
