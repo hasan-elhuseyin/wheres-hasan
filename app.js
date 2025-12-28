@@ -57,5 +57,28 @@ function update() {
     bar.style.width = progress + "%";
 }
 
+const PHOTO_URL =
+    "https://github.com/hasan-elhuseyin/wheres-hasan/main/src/photo_of_the_day.jpg";
+
+const photoBtn = document.getElementById("photoBtn");
+const overlay = document.getElementById("photoOverlay");
+const img = document.getElementById("dailyPhoto");
+
+photoBtn.addEventListener("click", () => {
+    img.src = PHOTO_URL + "?t=" + Date.now(); // cache bust
+    overlay.classList.remove("hidden");
+});
+
+// Handle BACK button on webOS remote
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace" || e.keyCode === 461) {
+        if (!overlay.classList.contains("hidden")) {
+            overlay.classList.add("hidden");
+            e.preventDefault();
+        }
+    }
+});
+
+
 setInterval(update, 1000);
 update();
