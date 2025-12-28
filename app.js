@@ -64,9 +64,20 @@ const photoBtn = document.getElementById("photoBtn");
 const overlay = document.getElementById("photoOverlay");
 const img = document.getElementById("dailyPhoto");
 
-photoBtn.addEventListener("click", () => {
-    img.src = PHOTO_URL + "?t=" + Date.now(); // cache bust
-    overlay.classList.remove("hidden");
+photoBtn.addEventListener("click", async () => {
+    try {
+        const response = await fetch(PHOTO_URL, {
+            cache: "no-store"
+        });
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        img.src = objectUrl;
+        overlay.classList.remove("hidden");
+    } catch (err) {
+        console.error("Failed to load photo of the day", err);
+    }
 });
 
 // Handle BACK button on webOS remote
@@ -92,11 +103,6 @@ const closePhotoBtn = document.getElementById("closePhotoBtn");
 function closePhoto() {
     overlay.classList.add("hidden");
 }
-
-photoBtn.addEventListener("click", () => {
-    img.src = PHOTO_URL + "?t=" + Date.now();
-    overlay.classList.remove("hidden");
-});
 
 closePhotoBtn.addEventListener("click", closePhoto);
 
