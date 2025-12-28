@@ -7,7 +7,6 @@ function getNextVisitWindow(now) {
     nextSunday.setHours(14, 0, 0, 0);
 
     if (daysUntilSunday === 0 && now.getHours() >= 18) {
-        // Already past today's visit → next Sunday
         nextSunday.setDate(nextSunday.getDate() + 7);
     }
 
@@ -45,7 +44,6 @@ function update() {
 
     status.textContent = "الوقت المتبقي حتى الزيارة القادمة";
 
-    // Progress calculation
     const lastEnd = new Date(start);
     lastEnd.setDate(lastEnd.getDate() - 7);
     lastEnd.setHours(18, 0, 0, 0);
@@ -66,13 +64,19 @@ const overlay = document.getElementById("photoOverlay");
 const img = document.getElementById("dailyPhoto");
 const closePhotoBtn = document.getElementById("closePhotoBtn");
 
-// Function to load photo fresh every click
+// Function to load photo and completely bypass cache
 async function loadPhoto() {
     try {
-        const response = await fetch(PHOTO_URL, { cache: "no-store" });
+        // Append a unique timestamp to force fetch a new copy
+        const uniqueUrl = PHOTO_URL + "?v=" + Date.now();
+
+        const response = await fetch(uniqueUrl, { cache: "no-store" });
+
+        if (!response.ok) throw new Error("Failed to fetch image");
+
         const blob = await response.blob();
 
-        // Always revoke previous object URL to avoid memory leak
+        // Revoke previous object URL to avoid memory leaks
         if (img.src.startsWith("blob:")) {
             URL.revokeObjectURL(img.src);
         }
