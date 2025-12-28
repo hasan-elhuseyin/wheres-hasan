@@ -58,7 +58,7 @@ function update() {
 }
 
 const PHOTO_URL =
-    "https://github.com/hasan-elhuseyin/wheres-hasan/main/src/photo_of_the_day.jpg";
+    "https://github.com/hasan-elhuseyin/wheres-hasan/blob/main/src/photo_of_the_day.jpg";
 
 const photoBtn = document.getElementById("photoBtn");
 const overlay = document.getElementById("photoOverlay");
