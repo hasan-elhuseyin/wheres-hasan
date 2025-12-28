@@ -57,27 +57,38 @@ function update() {
     bar.style.width = progress + "%";
 }
 
+// Single filename URL
 const PHOTO_URL =
     "https://raw.githubusercontent.com/hasan-elhuseyin/wheres-hasan/main/src/photo_of_the_day.jpg";
 
 const photoBtn = document.getElementById("photoBtn");
 const overlay = document.getElementById("photoOverlay");
 const img = document.getElementById("dailyPhoto");
+const closePhotoBtn = document.getElementById("closePhotoBtn");
 
-photoBtn.addEventListener("click", async () => {
+// Function to load photo fresh every click
+async function loadPhoto() {
     try {
-        const response = await fetch(PHOTO_URL, {
-            cache: "no-store"
-        });
-
+        const response = await fetch(PHOTO_URL, { cache: "no-store" });
         const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
 
+        // Always revoke previous object URL to avoid memory leak
+        if (img.src.startsWith("blob:")) {
+            URL.revokeObjectURL(img.src);
+        }
+
+        const objectUrl = URL.createObjectURL(blob);
         img.src = objectUrl;
         overlay.classList.remove("hidden");
     } catch (err) {
         console.error("Failed to load photo of the day", err);
     }
+}
+
+// Event listeners
+photoBtn.addEventListener("click", loadPhoto);
+closePhotoBtn.addEventListener("click", () => {
+    overlay.classList.add("hidden");
 });
 
 // Handle BACK button on webOS remote
@@ -90,22 +101,13 @@ document.addEventListener("keydown", (e) => {
     if (!isBack) return;
 
     if (!overlay.classList.contains("hidden")) {
-        closePhoto();
-
+        overlay.classList.add("hidden");
         e.preventDefault();
         e.stopImmediatePropagation();
         return false;
     }
 });
 
-const closePhotoBtn = document.getElementById("closePhotoBtn");
-
-function closePhoto() {
-    overlay.classList.add("hidden");
-}
-
-closePhotoBtn.addEventListener("click", closePhoto);
-
-
+// Start the timer
 setInterval(update, 1000);
 update();
