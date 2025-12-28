@@ -71,13 +71,36 @@ photoBtn.addEventListener("click", () => {
 
 // Handle BACK button on webOS remote
 document.addEventListener("keydown", (e) => {
-    if (e.key === "Backspace" || e.keyCode === 461) {
-        if (!overlay.classList.contains("hidden")) {
-            overlay.classList.add("hidden");
-            e.preventDefault();
-        }
+    const isBack =
+        e.key === "Backspace" ||
+        e.key === "Escape" ||
+        e.keyCode === 461;
+
+    if (!isBack) return;
+
+    if (!overlay.classList.contains("hidden")) {
+        closePhoto();
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return false;
     }
 });
+
+const closePhotoBtn = document.getElementById("closePhotoBtn");
+
+function closePhoto() {
+    overlay.classList.add("hidden");
+    photoBtn.focus();
+}
+
+photoBtn.addEventListener("click", () => {
+    img.src = PHOTO_URL + "?t=" + Date.now();
+    overlay.classList.remove("hidden");
+    closePhotoBtn.focus(); // focus back button
+});
+
+closePhotoBtn.addEventListener("click", closePhoto);
 
 
 setInterval(update, 1000);
